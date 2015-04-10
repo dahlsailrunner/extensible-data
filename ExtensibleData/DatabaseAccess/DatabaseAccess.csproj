@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="CollectionHelper.cs" />
     <Compile Include="ConnectionHelper.cs" />
+    <Compile Include="ExtensibleDataItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoredProcWrapper.cs" />
   </ItemGroup>

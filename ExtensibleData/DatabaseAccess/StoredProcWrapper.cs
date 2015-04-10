@@ -98,5 +98,21 @@ namespace DatabaseAccess
             Execute(out dt);
             outList = CollectionHelper.BuildCollection<T>(typeof (T), dt);
         }
+
+        public int ExecNonQuery()
+        {
+            try
+            {
+                return Command.ExecuteNonQuery();
+            }
+            catch (SqlException sqlErr)
+            {
+                throw new StoredProcException("SQL Exception occurred!!", Command.CommandText, InputsString, sqlErr);
+            }
+            catch (Exception ex) // some other kind of exception occurred!!
+            {
+                throw new StoredProcException("General Exception occurred!!", Command.CommandText, InputsString, ex);
+            }
+        }
     }
 }

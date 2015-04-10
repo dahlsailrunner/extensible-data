@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using DatabaseAccess;
 using ExtensibleData.Annotations;
 using Pocos;
@@ -12,9 +15,13 @@ namespace ExtensibleData
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        public ICommand SaveChangesCommand { get; set; }
+        public ICommand RefreshCommand { get; set; }
         public MainWindowViewModel()
         {           
             LoadData();
+            SaveChangesCommand = new SaveCommand(this);
+            RefreshCommand = new RefreshCommand(this);
         }
 
         public ObservableCollection<Contact> Contacts
@@ -33,13 +40,13 @@ namespace ExtensibleData
             get { return _selectedContact; }
             set
             {
-                if (Equals(value, _selectedContact)) return;
+                if (Equals(value, _selectedContact)) return;               
                 _selectedContact = value;
                 OnPropertyChanged();
             }
-        }
-
-        private async void LoadData()
+        }        
+        
+        internal async void LoadData()
         {
             IsBusy = true;
             BusyMessage = "Getting customers...";
@@ -65,6 +72,29 @@ namespace ExtensibleData
                 var sp = new StoredProcWrapper("Person.spGetSomeContacts", db);
                 List<Contact> results;
                 sp.Execute(out results);
+
+                var props = typeof(Contact).GetProperties();
+
+                foreach (var contact in results)
+                {
+                    var exsp = new StoredProcWrapper("Person.spGetExtendedData", db);
+                    exsp.SetParam("@ContactId", contact.ContactId);
+
+                    List<ExtensibleDataItem> dataFields;
+                    exsp.Execute(out dataFields);
+                   
+                    foreach (var prop in props)
+                    {
+                        var attr = (DataFieldAttribute)Attribute.GetCustomAttribute(prop, typeof(DataFieldAttribute));
+                        if (attr != null)
+                        {
+                            var dataItem = dataFields.FirstOrDefault(a => a.FieldName == attr.FieldName);
+                            if (dataItem != null)
+                                CollectionHelper.SetPropertyFromExtensibleFieldValue(contact, prop, dataItem.FieldValue);
+                        }
+                    }
+                    contact.AcceptChanges();
+                }
 
                 return results;
             }

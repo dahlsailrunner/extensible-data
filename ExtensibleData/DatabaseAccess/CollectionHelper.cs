@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace DatabaseAccess
@@ -103,6 +104,56 @@ namespace DatabaseAccess
             }
 
             return ret;
+        }
+
+        public static void SetPropertyFromExtensibleFieldValue(object objectWithPropToSet, PropertyInfo propToSet, string fieldValue)
+        {
+            try
+            {
+                if (propToSet.PropertyType == typeof(bool)) // special handling for bools -- doesn't like string to bool implicit conversion
+                {
+                    // straight-up bool types
+                    propToSet.SetValue(objectWithPropToSet, fieldValue == "1");
+                }
+                else if (propToSet.PropertyType == typeof(int) || propToSet.PropertyType == typeof(short) ||
+                         propToSet.PropertyType == typeof(long) || propToSet.PropertyType == typeof(float) ||
+                         propToSet.PropertyType == typeof(double) || propToSet.PropertyType == typeof(decimal))
+                {
+                    // numeric types (non-nullable)
+                    propToSet.SetValue(objectWithPropToSet, string.IsNullOrEmpty(fieldValue)
+                                                                    ? 0
+                                                                    : Convert.ChangeType(fieldValue, propToSet.PropertyType), null);
+                }
+                else
+                {
+                    if (propToSet.PropertyType.Name.StartsWith("Nullable"))
+                    {
+                        var type = Nullable.GetUnderlyingType(propToSet.PropertyType);
+                        if (string.IsNullOrEmpty(fieldValue))
+                        {
+                            // type is nullable and value we are setting is null (or empty) and underlying type is not string                            
+                            propToSet.SetValue(objectWithPropToSet, (type == typeof(string) ? fieldValue : null), null);
+                        }
+                        else
+                        {
+                            // nullable type with actual value
+                            propToSet.SetValue(objectWithPropToSet,
+                                type.IsEnum ? Enum.ToObject(type, Convert.ToInt32(fieldValue)) : Convert.ChangeType(fieldValue, type), null);
+                        }
+                    }
+                    else
+                    {
+                        // non-nullable type should have actual value and not be empty string
+                        propToSet.SetValue(objectWithPropToSet,
+                            propToSet.PropertyType.IsEnum ? Enum.ToObject(propToSet.PropertyType, Convert.ToInt32(fieldValue)) :
+                                                            Convert.ChangeType(fieldValue, propToSet.PropertyType), null); // non-nullable, non-numeric, non-enums
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(String.Format("Failed setting property from attribute value. Setting Property [{0}] from attribute value [{1}]", propToSet.Name, fieldValue), ex);
+            }
         }
 
     }

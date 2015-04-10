@@ -29,9 +29,17 @@
                         <telerik:GridViewDataColumn Header="Phone" DataMemberBinding="{Binding Phone}"/>
                     </telerik:RadGridView.Columns>
                 </telerik:RadGridView>
-                <telerik:RadPropertyGrid HorizontalAlignment="Left" Item="{Binding SelectedContact}" AutoGeneratePropertyDefinitions="True" MaxWidth="400" Margin="15">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                        <telerik:RadButton  Margin="0,10,10,0"   Padding="40,5" Background="SpringGreen" FontSize="14" Content="Save" Command="{Binding SaveChangesCommand}"/>
+                        <telerik:RadButton  Margin="0,10,20,0"   Padding="40,5" Background="Moccasin" FontSize="14" Content="Refresh" Command="{Binding RefreshCommand}"/>
+                    </StackPanel>
+                    <GroupBox Header="{Binding SelectedContact.FullName}" Margin="10">
+                        <telerik:RadPropertyGrid HorizontalAlignment="Left" Item="{Binding SelectedContact}" AutoGeneratePropertyDefinitions="True" Width="400" Margin="5,10,5,5"/>
+                    </GroupBox>
                     
-                </telerik:RadPropertyGrid>
+                </StackPanel>
+                
             </StackPanel>
         </telerik:RadBusyIndicator>
     </Grid>

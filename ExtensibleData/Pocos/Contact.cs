@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using Pocos.Annotations;
 
 namespace Pocos
@@ -14,7 +15,13 @@ namespace Pocos
 
         [Browsable(false)]
         public int ContactId { get; set; }
-        
+
+        [Browsable(false)]
+        public string FullName
+        {
+            get { return string.Format("{0} {1}", FirstName, LastName); }
+        }
+
         [Browsable(false)]
         public string FirstName { get; set; }
 
