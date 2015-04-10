@@ -1,0 +1,38 @@
+﻿<Window x:Class="ExtensibleData.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:local="clr-namespace:ExtensibleData"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"        
+        d:DesignHeight="300" d:DesignWidth="300"
+        Title="Extensible Data Demo" Height="450" Width="1000" >
+    <Grid>
+        <Grid.Resources>
+            <local:ModifiedRowStyleSelector x:Key="ModifiedRowStyleSelector"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="15" FontSize="14" Text="This application is a simple demonstration of extensible data being maintained by a Telerik RadPropertyGrid."/>
+        <telerik:RadBusyIndicator Grid.Row="1" IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyMessage}">
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadGridView Margin="10" ItemsSource="{Binding Contacts}" ShowGroupPanel="False" RowIndicatorVisibility="Collapsed" HorizontalAlignment="Left"
+                                     SelectedItem="{Binding SelectedContact}" AutoGenerateColumns="False" RowStyleSelector="{StaticResource ModifiedRowStyleSelector}">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn Header="First Name" DataMemberBinding="{Binding FirstName}"/>
+                        <telerik:GridViewDataColumn Header="Last Name" DataMemberBinding="{Binding LastName}"/>
+                        <telerik:GridViewDataColumn Header="Email" DataMemberBinding="{Binding EmailAddress}"/>
+                        <telerik:GridViewDataColumn Header="Phone" DataMemberBinding="{Binding Phone}"/>
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
+                <telerik:RadPropertyGrid HorizontalAlignment="Left" Item="{Binding SelectedContact}" AutoGeneratePropertyDefinitions="True" MaxWidth="400" Margin="15">
+                    
+                </telerik:RadPropertyGrid>
+            </StackPanel>
+        </telerik:RadBusyIndicator>
+    </Grid>
+</Window>
