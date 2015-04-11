@@ -5,16 +5,28 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensibleData", "ExtensibleData\ExtensibleData.csproj", "{CB317961-B4C2-4A09-A729-91F18D6B59E4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DatabaseObjects", "DatabaseObjects", "{B5F3926A-5E00-4B23-845D-8EA71E7C1359}"
-	ProjectSection(SolutionItems) = preProject
-		ContactExtendedData.sql = ContactExtendedData.sql
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseAccess", "DatabaseAccess\DatabaseAccess.csproj", "{F725A9D9-FFF4-44F3-82AE-D38814931471}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreInfrastructure", "CoreInfrastructure\CoreInfrastructure.csproj", "{230BEB92-4F1B-4F56-8AD8-09854BF09688}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pocos", "Pocos\Pocos.csproj", "{2EE480E7-1D23-4837-BBBE-8EE3961AED48}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DatabaseStuff", "DatabaseStuff", "{71AB7C13-9FAC-4CFA-A0ED-55A4C56A5DA0}"
+	ProjectSection(SolutionItems) = preProject
+		DatabaseObjects\EntLib.xspAddCategory.sql = DatabaseObjects\EntLib.xspAddCategory.sql
+		DatabaseObjects\EntLib.xspDevNull.sql = DatabaseObjects\EntLib.xspDevNull.sql
+		DatabaseObjects\EntLib.xspInsertCategoryLog.sql = DatabaseObjects\EntLib.xspInsertCategoryLog.sql
+		DatabaseObjects\EntLib.xspWriteLog.sql = DatabaseObjects\EntLib.xspWriteLog.sql
+		DatabaseObjects\EntLib.xspWritePerfLog.sql = DatabaseObjects\EntLib.xspWritePerfLog.sql
+		DatabaseObjects\EntLib.xtCategory.sql = DatabaseObjects\EntLib.xtCategory.sql
+		DatabaseObjects\EntLib.xtCategoryLog.sql = DatabaseObjects\EntLib.xtCategoryLog.sql
+		DatabaseObjects\EntLib.xtPerfLog.sql = DatabaseObjects\EntLib.xtPerfLog.sql
+		DatabaseObjects\EtnLib.xtLog.sql = DatabaseObjects\EtnLib.xtLog.sql
+		DatabaseObjects\Person.ContactExtendedData.sql = DatabaseObjects\Person.ContactExtendedData.sql
+		DatabaseObjects\Person.spGetExtendedData.sql = DatabaseObjects\Person.spGetExtendedData.sql
+		DatabaseObjects\Person.spGetSomeContacts.sql = DatabaseObjects\Person.spGetSomeContacts.sql
+		DatabaseObjects\Person.spUpdateExtensibleData.sql = DatabaseObjects\Person.spUpdateExtensibleData.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
