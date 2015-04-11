@@ -1,29 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Data.PropertyGrid;
 
 namespace ExtensibleData
-{
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+{    
+    public partial class MainWindow
     {
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
+            DataContext = new MainWindowViewModel();
+        }
+
+        private void WireUpValidation(object sender, AutoGeneratingPropertyDefinitionEventArgs e)
+        {
+            (e.PropertyDefinition.Binding as Binding).ValidatesOnDataErrors = true;
+            (e.PropertyDefinition.Binding as Binding).NotifyOnValidationError = true;
+            (e.PropertyDefinition.Binding as Binding).UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            if (sender is RadPropertyGrid)
+            {
+                var propGrid = sender as RadPropertyGrid;
+                propGrid.AddHandler(Validation.ErrorEvent, new RoutedEventHandler(OnBindingValidationError));
+            }
+        }
+        // NOTE:  If you had some real validations and you wanted to keep track of them and disable saving 
+        // or display the errors you could do that with logic such as below.
+        private void OnBindingValidationError(object sender, RoutedEventArgs e)
+        {
+            //var args = e as ValidationErrorEventArgs;
+            //if (args == null)
+            //    return;
+
+            //if (args.Action == ValidationErrorEventAction.Added)
+            //{
+            //    ViewModel.Errors.Add(args.Error);
+            //}
+            //else
+            //{
+            //    ViewModel.Errors.Remove(args.Error);
+            //}
         }
     }
 }

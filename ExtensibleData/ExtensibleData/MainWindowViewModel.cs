@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -71,9 +69,7 @@ namespace ExtensibleData
                 db.Open();
                 var sp = new StoredProcWrapper("Person.spGetSomeContacts", db);
                 List<Contact> results;
-                sp.Execute(out results);
-
-                var props = typeof(Contact).GetProperties();
+                sp.Execute(out results);                
 
                 foreach (var contact in results)
                 {
@@ -83,22 +79,15 @@ namespace ExtensibleData
                     List<ExtensibleDataItem> dataFields;
                     exsp.Execute(out dataFields);
                    
-                    foreach (var prop in props)
-                    {
-                        var attr = (DataFieldAttribute)Attribute.GetCustomAttribute(prop, typeof(DataFieldAttribute));
-                        if (attr != null)
-                        {
-                            var dataItem = dataFields.FirstOrDefault(a => a.FieldName == attr.FieldName);
-                            if (dataItem != null)
-                                CollectionHelper.SetPropertyFromExtensibleFieldValue(contact, prop, dataItem.FieldValue);
-                        }
-                    }
+                    CollectionHelper.UpdateObjectFromExtensibleData(dataFields, contact);
                     contact.AcceptChanges();
                 }
 
                 return results;
             }
         }
+
+        
 
         private string _busyMessage;
         private bool _isBusy;

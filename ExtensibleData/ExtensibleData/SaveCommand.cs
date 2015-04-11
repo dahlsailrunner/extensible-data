@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
 using CoreInfrastructure.Logging;
 using DatabaseAccess;
 using Pocos;
@@ -45,7 +43,7 @@ namespace ExtensibleData
                 MessageBox.Show("Some kind of error happened.  Check the logs.");
                 SuperLogger.WriteLog(ex, LoggingCategory.UserInterface);
             }
-
+            
             _vm.IsBusy = false;
         }
 
@@ -53,54 +51,20 @@ namespace ExtensibleData
         {
             using (var db = new SqlConnection(ConnectionHelper.ConnectionString))
             {
-                db.Open();                
+                db.Open();
 
+                // not part of a single transaction.  you can handle that on your own if important...
                 foreach (var changedContact in _vm.Contacts.Where(a => a.IsChanged))
                 {
                     var sp = new StoredProcWrapper("Person.spUpdateExtensibleData", db);
                     sp.SetParam("@ContactId", changedContact.ContactId);
 
-                    var fieldsInXml = GetExtensibleDataAsXml(changedContact);
+                    var fieldsInXml = CollectionHelper.GetExtensibleDataAsXml(changedContact);
                     sp.SetParam("@XmlFieldVals", fieldsInXml);
                     sp.ExecNonQuery();
                 }               
-            }
-            // not part of a single transaction.  you can handle that on your own if important...
-
-        }
-
-        public static string GetExtensibleDataAsXml(object objectWithExtensibleData)
-        {
-            var gotSomeXml = false;
-            XElement results = null;
-            var props = objectWithExtensibleData.GetType().GetProperties();
-            foreach (var prop in props)
-            {
-                var fldAttr = (DataFieldAttribute) Attribute.GetCustomAttribute(prop, typeof (DataFieldAttribute));
-                if (fldAttr == null) continue;
-
-                if (!gotSomeXml)
-                {
-                    results = new XElement("ExtensibleFields");
-                    gotSomeXml = true;
-                }
-
-                var val = prop.GetValue(objectWithExtensibleData);                
-
-                if (val == null)
-                    val = "";
-                else if (val is Enum)
-                    val = ((int) val).ToString(CultureInfo.InvariantCulture);
-                else if (val is bool)
-                    val = ((bool) val) ? "1" : "0";
-                else if (val is DateTime)
-                    val = ((DateTime) val).ToShortDateString();
-
-                results.Add(new XElement("DataElement", new XElement("FieldName", fldAttr.FieldName),
-                                                        new XElement("FieldValue", val.ToString())));         
-            }
-            return results == null ? "" : results.ToString();
-        }
+            }            
+        }        
 
         public event EventHandler CanExecuteChanged
         {

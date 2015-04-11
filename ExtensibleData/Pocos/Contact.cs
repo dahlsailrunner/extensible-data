@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
-using System.Security.Policy;
 using Pocos.Annotations;
 
 namespace Pocos
@@ -11,7 +10,7 @@ namespace Pocos
     {
         private DateTime? _birthday;
         private Movies? _favoriteMovie;
-        private bool _enrolledInSpecialProgram;
+        private bool _enrolledInSpecialProgram;        
 
         [Browsable(false)]
         public int ContactId { get; set; }
@@ -34,7 +33,8 @@ namespace Pocos
         [Browsable(false)]
         public string Phone { get; set; }
 
-        [Display(ShortName = "Birthday", Description = "We will send the contact something related to their favorite movie on their birthday.")]
+        [Display(ShortName = "Birthday", Description = "We will send the contact something " +
+                                                       "related to their favorite movie on their birthday.")]
         [DataField(FieldName = "Birthday")]
         public DateTime? Birthday
         {
@@ -47,7 +47,8 @@ namespace Pocos
             }
         }
 
-        [Display(ShortName = "Favorite Movie", Description = "If the contact's birthday is also specified, we will send them something regarding this choice on their birthday.")]
+        [Display(ShortName = "Favorite Movie", Description = "If the contact's birthday is also " +
+                          "specified, we will send them something regarding this choice on their birthday.")]
         [DataField(FieldName = "FavMovie")]
         public Movies? FavoriteMovie
         {
@@ -60,7 +61,8 @@ namespace Pocos
             }
         }
 
-        [Display(ShortName = "Special Program?", Description = "Indicates whether the customer is enrolled in our special program.")]
+        [Display(ShortName = "Special Program?", Description = "Indicates whether the customer is " +
+                                                               "enrolled in our special program.")]
         [DataField(FieldName = "SpecialProgram")]
         public bool EnrolledInSpecialProgram
         {
@@ -71,7 +73,7 @@ namespace Pocos
                 _enrolledInSpecialProgram = value;
                 OnPropertyChanged();
             }
-        }
+        }        
 
         public event PropertyChangedEventHandler PropertyChanged;
 

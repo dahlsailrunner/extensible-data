@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using System.Xml.Serialization;
+using Pocos;
 
 namespace DatabaseAccess
 {
@@ -156,5 +160,50 @@ namespace DatabaseAccess
             }
         }
 
+        public static void UpdateObjectFromExtensibleData(List<ExtensibleDataItem> dataFields, object contact)
+        {
+            foreach (var prop in contact.GetType().GetProperties())
+            {
+                var attr = (DataFieldAttribute)Attribute.GetCustomAttribute(prop, typeof(DataFieldAttribute));
+                if (attr != null)
+                {
+                    var dataItem = dataFields.FirstOrDefault(a => a.FieldName == attr.FieldName);
+                    if (dataItem != null)
+                        SetPropertyFromExtensibleFieldValue(contact, prop, dataItem.FieldValue);
+                }
+            }
+        }
+        public static string GetExtensibleDataAsXml(object objectWithExtensibleData)
+        {
+            var gotSomeXml = false;
+            XElement results = null;
+            var props = objectWithExtensibleData.GetType().GetProperties();
+            foreach (var prop in props)
+            {
+                var fldAttr = (DataFieldAttribute)Attribute.GetCustomAttribute(prop, typeof(DataFieldAttribute));
+                if (fldAttr == null) continue;
+
+                if (!gotSomeXml)
+                {
+                    results = new XElement("ExtensibleFields");
+                    gotSomeXml = true;
+                }
+
+                var val = prop.GetValue(objectWithExtensibleData);
+
+                if (val == null)
+                    val = "";
+                else if (val is Enum)
+                    val = ((int)val).ToString(CultureInfo.InvariantCulture);
+                else if (val is bool)
+                    val = ((bool)val) ? "1" : "0";
+                else if (val is DateTime)
+                    val = ((DateTime)val).ToShortDateString();
+
+                results.Add(new XElement("DataElement", new XElement("FieldName", fldAttr.FieldName),
+                                                        new XElement("FieldValue", val.ToString())));
+            }
+            return results == null ? "" : results.ToString();
+        }
     }
 }

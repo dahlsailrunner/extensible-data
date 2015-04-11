@@ -98,6 +98,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ExtensibleDataTemplateSelector.cs" />
     <Compile Include="RefreshCommand.cs" />
     <Compile Include="SaveCommand.cs" />
     <Page Include="MainWindow.xaml">
