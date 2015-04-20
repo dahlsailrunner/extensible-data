@@ -46,6 +46,7 @@
                         <telerik:RadPropertyGrid HorizontalAlignment="Left" Item="{Binding SelectedContact}" AutoGeneratePropertyDefinitions="True" 
                                                  Width="400" Margin="5,10,5,5" AutoGeneratingPropertyDefinition="WireUpValidation"
                                                  EditorTemplateSelector="{StaticResource TemplateSelector}"/>
+                                                 
                     </GroupBox>
                     
                 </StackPanel>

@@ -48,52 +48,57 @@ namespace DatabaseAccess
                             if (row[col.Name].Equals(DBNull.Value))
                             {
                                 col.SetValue(entity, null);
+                                continue;
+                            }
+
+                            if (col.PropertyType == typeof (bool))
+                            {
+                                // straight-up bool types
+                                col.SetValue(entity, (row[col.Name].ToString() == "1" || row[col.Name].ToString() == bool.TrueString));
+                            }
+                            else if (col.PropertyType == typeof (int) || col.PropertyType == typeof (short) ||
+                                     col.PropertyType == typeof (long) || col.PropertyType == typeof (double) ||
+                                     col.PropertyType == typeof (decimal))
+                            {
+                                // numeric types (non-nullable)
+                                col.SetValue(entity, string.IsNullOrEmpty(row[col.Name].ToString())
+                                    ? 0
+                                    : Convert.ChangeType(row[col.Name].ToString(), col.PropertyType)
+                                    , null);
                             }
                             else
                             {
-                                if (col.PropertyType == typeof(bool))
+                                if (col.PropertyType.Name.StartsWith("Nullable"))
                                 {
-                                    // straight-up bool types
-                                    col.SetValue(entity, (row[col.Name].ToString() == "1" || row[col.Name].ToString() == bool.TrueString));
-                                }
-                                else if (col.PropertyType == typeof(int) || col.PropertyType == typeof(short) ||
-                                            col.PropertyType == typeof(long) || col.PropertyType == typeof(double) || col.PropertyType == typeof(decimal))
-                                {
-                                    // numeric types (non-nullable)
-                                    col.SetValue(entity, string.IsNullOrEmpty(row[col.Name].ToString())
-                                                            ? 0
-                                                            : Convert.ChangeType(row[col.Name].ToString(), col.PropertyType)
-                                                , null);
+                                    var colType = Nullable.GetUnderlyingType(col.PropertyType);
+                                    if (colType == typeof (int) || colType == typeof (short) ||
+                                        colType == typeof (long) ||
+                                        colType == typeof (double) || colType == typeof (decimal))
+                                    {
+                                        if (row[col.Name].Equals(DBNull.Value))
+                                            // numeric nullables
+                                            col.SetValue(entity, null, null);
+                                        else
+                                            col.SetValue(entity,
+                                                Convert.ChangeType(row[col.Name].ToString(), colType), null);
+                                    }
+                                    else if (colType == typeof (bool))
+                                        col.SetValue(entity, row[col.Name].ToString() == "1");
+                                    else
+                                    {
+                                        //non-numeric nullables
+                                        col.SetValue(entity,
+                                            Convert.ChangeType(row[col.Name].ToString(),
+                                                Nullable.GetUnderlyingType(col.PropertyType)), null);
+                                    }
                                 }
                                 else
                                 {
-                                    if (col.PropertyType.Name.StartsWith("Nullable"))
-                                    {
-                                        var colType = Nullable.GetUnderlyingType(col.PropertyType);
-                                        if (colType == typeof(int) || colType == typeof(short) ||
-                                            colType == typeof(long) ||
-                                            colType == typeof(double) || colType == typeof(decimal))
-                                        {
-                                            if (row[col.Name].Equals(DBNull.Value))
-                                                // numeric nullables
-                                                col.SetValue(entity, null, null);
-                                            else
-                                                col.SetValue(entity, Convert.ChangeType(row[col.Name].ToString(), colType), null);
-                                        }
-                                        else if (colType == typeof(bool))
-                                            col.SetValue(entity, row[col.Name].ToString() == "1");
-                                        else
-                                        {
-                                            //non-numeric nullables
-                                            col.SetValue(entity, Convert.ChangeType(row[col.Name].ToString(), Nullable.GetUnderlyingType(col.PropertyType)), null);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        col.SetValue(entity, col.PropertyType.IsEnum
-                                                                ? Enum.ToObject(col.PropertyType, Convert.ToInt32(row[col.Name].ToString())) // enum logic
-                                                                : Convert.ChangeType(row[col.Name].ToString(), col.PropertyType), null); // non-nullable, non-numeric, non-enums
-                                    }
+                                    col.SetValue(entity, col.PropertyType.IsEnum
+                                        ? Enum.ToObject(col.PropertyType, Convert.ToInt32(row[col.Name].ToString()))
+                                        // enum logic
+                                        : Convert.ChangeType(row[col.Name].ToString(), col.PropertyType), null);
+                                    // non-nullable, non-numeric, non-enums
                                 }
                             }
                         }

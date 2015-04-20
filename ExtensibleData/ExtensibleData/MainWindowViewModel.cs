@@ -67,13 +67,13 @@ namespace ExtensibleData
             using (var db = new SqlConnection(ConnectionHelper.ConnectionString))
             {
                 db.Open();
-                var sp = new StoredProcWrapper("Person.spGetSomeContacts", db);
+                var sp = new Sproc("Person.spGetSomeContacts", db);
                 List<Contact> results;
                 sp.Execute(out results);                
 
                 foreach (var contact in results)
                 {
-                    var exsp = new StoredProcWrapper("Person.spGetExtendedData", db);
+                    var exsp = new Sproc("Person.spGetExtendedData", db);
                     exsp.SetParam("@ContactId", contact.ContactId);
 
                     List<ExtensibleDataItem> dataFields;

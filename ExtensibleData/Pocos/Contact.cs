@@ -10,7 +10,8 @@ namespace Pocos
     {
         private DateTime? _birthday;
         private Movies? _favoriteMovie;
-        private bool _enrolledInSpecialProgram;        
+        private bool _enrolledInSpecialProgram;
+        private string _favoriteWeapon;
 
         [Browsable(false)]
         public int ContactId { get; set; }
@@ -73,7 +74,20 @@ namespace Pocos
                 _enrolledInSpecialProgram = value;
                 OnPropertyChanged();
             }
-        }        
+        }
+
+        [Display(ShortName = "Weapon of Choice", Description = "Pick blaster.")]
+        [DataField(FieldName = "FavWeapon")]
+        public string FavoriteWeapon
+        {
+            get { return _favoriteWeapon; }
+            set
+            {
+                if (value == _favoriteWeapon) return;
+                _favoriteWeapon = value;
+                OnPropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

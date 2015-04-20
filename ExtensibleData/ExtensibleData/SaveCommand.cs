@@ -56,7 +56,7 @@ namespace ExtensibleData
                 // not part of a single transaction.  you can handle that on your own if important...
                 foreach (var changedContact in _vm.Contacts.Where(a => a.IsChanged))
                 {
-                    var sp = new StoredProcWrapper("Person.spUpdateExtensibleData", db);
+                    var sp = new Sproc("Person.spUpdateExtensibleData", db);
                     sp.SetParam("@ContactId", changedContact.ContactId);
 
                     var fieldsInXml = CollectionHelper.GetExtensibleDataAsXml(changedContact);

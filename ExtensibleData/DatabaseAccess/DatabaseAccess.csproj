@@ -43,7 +43,7 @@
     <Compile Include="ConnectionHelper.cs" />
     <Compile Include="ExtensibleDataItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StoredProcWrapper.cs" />
+    <Compile Include="Sproc.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoreInfrastructure\CoreInfrastructure.csproj">

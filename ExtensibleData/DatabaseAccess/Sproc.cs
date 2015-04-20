@@ -8,11 +8,11 @@ using CoreInfrastructure.Logging;
 
 namespace DatabaseAccess
 {
-    public class StoredProcWrapper
+    public class Sproc
     {
         public SqlCommand Command { get; private set; }        
 
-        public StoredProcWrapper(string storedProcName, SqlConnection db)
+        public Sproc(string storedProcName, SqlConnection db)
         {
             Command = new SqlCommand(storedProcName, db)
             {
