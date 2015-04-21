@@ -12,6 +12,7 @@ namespace Pocos
         private Movies? _favoriteMovie;
         private bool _enrolledInSpecialProgram;
         private string _favoriteWeapon;
+        private string _codeCampLocation;
 
         [Browsable(false)]
         public int ContactId { get; set; }
@@ -85,6 +86,19 @@ namespace Pocos
             {
                 if (value == _favoriteWeapon) return;
                 _favoriteWeapon = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Display(ShortName = "Code Camp Spot", Description = "stuff.")]
+        [DataField(FieldName = "CcLoc")]
+        public string CodeCampLocation
+        {
+            get { return _codeCampLocation; }
+            set
+            {
+                if (value == _codeCampLocation) return;
+                _codeCampLocation = value;
                 OnPropertyChanged();
             }
         }
